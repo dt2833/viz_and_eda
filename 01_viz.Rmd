@@ -1,6 +1,6 @@
 ---
 title: "01_viz"
-output: git_document
+output: github_document
 date: "2026-10-01"
 ---
 
@@ -16,4 +16,136 @@ data("weather_df")
 
 ```
 
+Lets make a scatterplot 
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax))+
+  geom_point()
+```
+
+```{r}
+ggp_temp_scatterplot = 
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color=name),alpha = 0.25 ) + 
+  geom_smooth(se = FALSE)
+             
+
+ggp_temp_scatterplot
+```
+
+show faceting 
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color= name)) +
+  geom_point(alpha = 0.5 ) + 
+  facet_grid(. ~name) # column , old
+```
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color= name)) +
+  geom_point(alpha = 0.5 ) + 
+  facet_grid(cols = vars(name)) # new 
+```
+
+```{r}
+
+weather_df |> 
+  ggplot(aes(x = date, y= tmax, color = name)) + 
+  geom_point(aes(size = prcp),alpha = 0.5) + 
+  facet_grid(. ~name)
+
+```
+
+make a plot of central park tmax v tmin onlu, convert temperatures to F
+
+```{r}
+
+weather_df |> 
+  filter(name == "CentralPark_NY") |>
+  mutate(
+    tmax = tmax *(9/5) + 32,
+    tmin = tmin *(9/5) + 32
+  )|>
+  ggplot(aes(x = tmin, y= tmax)) + 
+  geom_point()
+
+
+```
+
+What is a hex plot 
+
+```{r}
+weather_df |> 
+  ggplot(aes(x=tmin, y=tmax))+ 
+  geom_hex()
+```
+
+## univariate plots 
+
+```{r}
+weather_df |>
+  ggplot(aes(x =tmax, fill = name)) + 
+  geom_histogram() +
+facet_grid(. ~name)
+
+```
+
+
+density plots 
+
+```{r}
+weather_df |>
+  ggplot(aes(x= tmax, fill = name)) + 
+  geom_density (alpha = 0.3)
+```
+
+boxplots 
+```{r}
+weather_df |> 
+  
+  ggplot(aes(x = name,y= tmax)) + 
+  geom_boxplot()
+
+```
+
+violin plot
+
+```{r}
+weather_df |> 
+  ggplot(aes(x= name, y = tmax)) + 
+  geom_violin() 
+
+```
+
+
+ridge plots
+```{r}
+weather_df |> 
+  ggplot ( aes( x = tmax, y = name)) + 
+  geom_density_ridges()
+```
+
+## save some of my plots 
+
+```{r}
+  ggp_weather= 
+  weather_df |> 
+
+  ggplot( aes( x = date, y =tmax, color = name)) + 
+  geom_point(aes(size = prcp), alpha = 0.5) + 
+  facet_grid(. ~name) 
+
+ggp_weather
+
+ggsave("images/ggp_wether.pdf", ggp_weather)
+```
+
+
+```{r fig.width = 12, fig.height = 12} 
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+```
 
